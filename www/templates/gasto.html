@@ -12,6 +12,7 @@
         </select>
       </label>
       <div class="spacer" style="height: 40px;"></div>
+
       <label class="item item-input" id="gasto-input4">
         <span class="input-label">Otro?</span>
         <input type="text" ng-model="gasto.otro" value="" placeholder="Gasto alternativo">
@@ -24,5 +25,6 @@
     
     <button id="gasto-button5" class="button button-dark  button-block icon-left ion-android-checkbox" ng-click="agregarGasto(gasto,cantidad)">Agregar</button>
    </form>
+    <button ng-click="checarGastos()" id="gasto-button5" class="button button-dark  button-block icon-left ion-social-usd-outline" >Mis Gastos</button>
   </ion-content>
 </ion-view>
