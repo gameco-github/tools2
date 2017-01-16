@@ -4,22 +4,6 @@ angular.module('app.controllers', [])
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams,$Global) {
-  
-  $scope.agregarFondo = function(data){
-      var settings ={ 
-            "url": "http://gamecotools.com.mx/api/agregarFondo",
-            "method": "POST",
-            "data": {
-              "id": "9",
-              "cantidad": data,
-              "_token": $Global.token
-            }
-          }
-        $.ajax(settings).done(function (response) {
-          console.log(response);
-        });
-  }
-
 
 }])
    
@@ -38,7 +22,7 @@ function ($scope, $stateParams,$ionicPopup, Login, $Global, $state, $ionicPopup)
 
         }else{ 
         var settings ={ 
-            "url": "http://gamecotools.com.mx/api/auth_login",
+            "url": $Global.url+"/api/auth_login",
             "method": "POST",
             "data": {
               "email": $scope.login.email,
@@ -46,7 +30,6 @@ function ($scope, $stateParams,$ionicPopup, Login, $Global, $state, $ionicPopup)
             }
           }
         $.ajax(settings).done(function (response) {
-          console.log(response);
            if (response['token']) {
                    $Global.token = response['token']['token'];
                    $Global.id = response['id']['id'];
@@ -64,11 +47,12 @@ function ($scope, $stateParams,$ionicPopup, Login, $Global, $state, $ionicPopup)
 
 }])
    
-.controller('gastoCtrl', ['$scope', '$stateParams', 'MostrarType', 'GuardarGasto', '$Global', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gastoCtrl', ['$scope', '$stateParams', 'MostrarType', 'GuardarGasto', '$Global', '$ionicPopup', '$state', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, MostrarType, GuardarGasto, $Global, $ionicPopup) {
-     console.log($Global.token);
+function ($scope, $stateParams, MostrarType, GuardarGasto, $Global, $ionicPopup, $state) {
+   $scope.checar = "Checar valor";
+
      MostrarType.mostrar().success(function(data,status,headers,config){
       $scope.tipos = data;
      })
@@ -123,7 +107,7 @@ function ($scope, $stateParams, MostrarType, GuardarGasto, $Global, $ionicPopup)
         }
         if($scope.bandera){
           var settings ={ 
-              "url": "http://gamecotools.com.mx/api/gastos",
+              "url": $Global.url+"/api/gastos",
               "method": "POST",
               "data": {
                 "id": $Global.id,
@@ -145,6 +129,37 @@ function ($scope, $stateParams, MostrarType, GuardarGasto, $Global, $ionicPopup)
           });
        }
     }
+
+
+
+    $scope.checarGastos = function(){
+       var settings ={ 
+                "url": $Global.url+"/api/misgastos",
+                "method": "POST",
+                 "data": {
+                "id": $Global.id,
+                "_token": $Global.token
+              }
+                
+              }
+          $.ajax(settings).done(function (response) {
+               if(response == "false"){
+                       var alertPopup = $ionicPopup.alert({
+                           title: 'Gasto',
+                           template: 'No Tienes Gastos',
+                           buttons: [{ text: 'OK' ,type: 'button-assertive'}]
+                         }); 
+               }else{
+                  $Global.mis_gastos = response; 
+                  $state.go('misGastos');
+               }
+             
+          })
+    }
+
+
+
+
 }])
 
 .controller('logoutCtrl', ['$scope', '$stateParams','$ionicPopup','$state', '$window',
@@ -164,4 +179,40 @@ function ($scope, $stateParams, MostrarType, GuardarGasto, $Global, $ionicPopup)
              }
            });
         }
+}])
+
+.controller('misGastosCtrl', ['$scope', '$stateParams', '$Global', '$state', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $stateParams, $Global, $state, $ionicPopup) {
+     $scope.datos = $Global.mis_gastos;
+     $scope.eliminarGasto = function (id){
+
+         var confirmPopup = $ionicPopup.confirm({
+             title: 'Eliminar',
+             template: 'Estas seguro de Eliminar el Gasto?'
+           });
+           confirmPopup.then(function(res) {
+             if(res) {
+                    var settings ={ 
+                      "url": $Global.url+"/api/deleteGasto",
+                      "method": "POST",
+                      "data": {
+                      "id": id,
+                      "_token": $Global.token
+                    }
+
+                    }
+                $.ajax(settings).done(function (response) {
+                   $state.go('gasto');
+                })
+
+             } else {
+              
+             }
+           });
+
+
+     }
+
 }])
