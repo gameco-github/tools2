@@ -28,6 +28,12 @@ angular.module('app.routes', [])
     controller: 'gastoCtrl'
   })
 
+   .state('misGastos', {
+    url: '/page4',
+    templateUrl: 'templates/misGastos.html',
+    controller: 'misGastosCtrl'
+  })
+
 $urlRouterProvider.otherwise('/page2')
 
   
