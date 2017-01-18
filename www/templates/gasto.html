@@ -4,7 +4,7 @@
   </ion-nav-buttons>
   <ion-content padding="true" class="has-header">
     <h4 id="gasto-heading1" style="color:#000000;">En que fue el Gasto?</h4>
-    <form id="gasto-form3" class="list" ng-controller="gastoCtrl">
+    <form id="gasto-form3" class="list sinfondo" ng-controller="gastoCtrl">
       <label class="item item-select" id="gasto-select1">
         <span class="input-label">Tipo</span>
         <select ng-model="mySelect" ng-change="SelectValue(mySelect)">
@@ -22,9 +22,10 @@
         <span class="input-label">Efectivo</span>
         <input type="number"  ng-model="cantidad" placeholder="$..">
       </label>
-    
-    <button id="gasto-button5" class="button button-dark  button-block icon-left ion-android-checkbox" ng-click="agregarGasto(gasto,cantidad)">Agregar</button>
+      <button id="gasto-button5" class="button button-dark  button-block icon-left ion-android-checkbox" ng-click="agregarGasto(gasto,cantidad)">Agregar</button>
    </form>
+   
     <button ng-click="checarGastos()" id="gasto-button5" class="button button-dark  button-block icon-left ion-social-usd-outline" >Mis Gastos</button>
+    <button ng-click="checaFondo()" id="gasto-button5" class="button button-dark  button-block icon-left ion-paper-airplane" >Transferir Fondos</button>
   </ion-content>
 </ion-view>
