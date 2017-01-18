@@ -15,37 +15,26 @@ angular.module('app.services', [])
 		}
 	}
 }])
-.factory('MostrarGastos', ['$http', function($http){
+
+.factory('Empleado', ['$http','$Global', function($http, $Global){
 	return {
-		mostrar : function(id){
-		return $http.post('http://gameco.dev/api/misgastos',{'id':id});
-		}
-	}
-}])
-.factory('GuardarGasto', ['$http', function($http){
-	return {
-		agregar :function(id,tipo,cantidad,token){
-	       
-           return $http.post("http://gameco.dev/api/gastos",{'id': id,'tipo': tipo,'cantidad': cantidad,'_token':token});
+		mostrar : function(){
+		return $http.post($Global.url+'/api/empleado');
 		}
 	}
 }])
 
-.factory('Login', ['$http', function($http){
-	return {	
-		Entrar : function(email,contra){
-	      
-            return $http.post("http://gamecotools.com.mx/api/auth_login",{'email': email,'password': contra});
-          
-		}
-
-	}
-}])
 .factory('$Global', function() {
   return {
-  	  url : 'http://gamecotools.com.mx',
+  	  url : 'http://gameco.dev',
       token : '',
       id : '',
       mis_gastos : ''
+  }
+})
+
+.factory('$Variables', function() {
+  return {
+  	  fondo : ''
   }
 })
