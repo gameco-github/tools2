@@ -34,7 +34,7 @@ angular.module('app.services', [])
 
 .factory('$Global', function() {
   return {
-  	  url : 'http://gameco.dev',
+  	  url : 'http://gamecotools.com.mx',
       token : '',
       id : '',
       mis_gastos : ''
