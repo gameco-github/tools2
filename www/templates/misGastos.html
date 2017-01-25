@@ -14,11 +14,13 @@
   <a style=" float: right; color: red;" 
   ng-click="eliminarGasto(gasto.id)"
   class="button button-icon icon ion-ios-trash-outline" 
+  ></a>  <a style=" float: right; color: #387ef5;" 
+  ng-click="showPopup(gasto.id,gasto.type,gasto.spending)"
+  class="button button-icon icon ion-compose" 
   ></a></div>
 
   
   </ion-item>
 </ion-list>
-    
   </ion-content>
 </ion-view>
