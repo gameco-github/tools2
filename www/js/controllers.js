@@ -29,14 +29,14 @@ function ($scope, $stateParams, $Global, $state, $ionicPopup, $Variables, Emplea
                            buttons: [{ text: 'OK' ,type: 'button-assertive'}]
                          });
             }else{
-              if($scope.datosFondo.cantidad < $scope.cantidad){
+              if($scope.datosFondo.fondoActual < $scope.cantidad){
                 var alertPopup = $ionicPopup.alert({
                            title: 'Error de Cantidad',
                            template: 'Fondo Insuficiente',
                            buttons: [{ text: 'OK' ,type: 'button-assertive'}]
                          });
               }else{
-               $scope.fondoCambio = $scope.datosFondo.cantidad - $scope.cantidad;
+               $scope.fondoCambio = $scope.datosFondo.fondoActual - $scope.cantidad;
           
              
                 var settings ={ 
@@ -58,7 +58,7 @@ function ($scope, $stateParams, $Global, $state, $ionicPopup, $Variables, Emplea
                            template: 'Transferencia Exitosa',
                            buttons: [{ text: 'OK' ,type: 'button-positive'}]
                          });
-                   $state.go('gasto');
+                   $state.go('menu');
                 }else{
                    var alertPopup = $ionicPopup.alert({
                            title: 'Transferencia',
@@ -75,20 +75,25 @@ function ($scope, $stateParams, $Global, $state, $ionicPopup, $Variables, Emplea
  
 }])
    
-.controller('gastosGamecoCtrl', ['$scope', '$stateParams', '$ionicPopup', '$Global', '$state', '$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('gastosGamecoCtrl', ['$scope', '$stateParams', '$ionicPopup', '$Global', '$state', '$ionicPopup', '$ionicLoading', '$ionicActionSheet', '$timeout', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams,$ionicPopup, $Global, $state, $ionicPopup) {
+function ($scope, $stateParams,$ionicPopup, $Global, $state, $ionicPopup, $ionicLoading, $ionicActionSheet, $timeout) {
    $scope.Entrar = function(){
     //eligio_arreola@hotmail.com
      if(!$scope.login){
       var alertPopup = $ionicPopup.alert({
                        title: 'Error de Ingreso',
                        template: 'Ingrese Usuario o Contraseña',
+                       duration: 3000,
                        buttons: [{ text: 'OK' ,type: 'button-assertive'}]
                      });
 
         }else{ 
+        $ionicLoading.show({
+        template: 'Cargando...',
+        duration: 2000
+        })
         var settings ={ 
             "url": $Global.url+"/api/auth_login",
             "method": "POST",
@@ -101,7 +106,7 @@ function ($scope, $stateParams,$ionicPopup, $Global, $state, $ionicPopup) {
            if (response['token']) {
                    $Global.token = response['token']['token'];
                    $Global.id = response['id']['id'];
-                   $state.go('gasto');
+                   $state.go('menu');
            }else{
             var alertPopup = $ionicPopup.alert({
                            title: 'Error de Ingreso',
@@ -119,7 +124,7 @@ function ($scope, $stateParams,$ionicPopup, $Global, $state, $ionicPopup) {
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, MostrarType, $Global, $ionicPopup, $state, $Variables) {
-   $scope.checar = "Checar valor";
+ 
 
      MostrarType.mostrar().success(function(data,status,headers,config){
       $scope.tipos = data;
@@ -238,7 +243,7 @@ function ($scope, $stateParams, MostrarType, $Global, $ionicPopup, $state, $Vari
             if(response=='false'){
                 var alertPopup = $ionicPopup.alert({
                        title: 'Fondo',
-                       template: 'No Tienes Ningun Fondo',
+                       template: 'No Tienes Ningun Fondo o Fondo insuficiente',
                        buttons: [{ text: 'OK' ,type: 'button-assertive'}]
                      });
             }else{
@@ -247,8 +252,6 @@ function ($scope, $stateParams, MostrarType, $Global, $ionicPopup, $state, $Vari
             }
           })
    }
-  
-
 
 }])
 
@@ -271,10 +274,11 @@ function ($scope, $stateParams, MostrarType, $Global, $ionicPopup, $state, $Vari
         }
 }])
 
-.controller('misGastosCtrl', ['$scope', '$stateParams', '$Global', '$state', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('misGastosCtrl', ['$scope', '$stateParams', '$Global', '$state', '$ionicPopup', '$controller', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $Global, $state, $ionicPopup) {
+function ($scope, $stateParams, $Global, $state, $ionicPopup, $controller) {
+  $controller('gastoCtrl',{$scope : $scope });
      $scope.datos = $Global.mis_gastos;
      $scope.eliminarGasto = function (id){
 
@@ -304,5 +308,60 @@ function ($scope, $stateParams, $Global, $state, $ionicPopup) {
 
 
      }
+      $scope.showPopup = function(id,tipo,cantidad) {
+       $scope.data = {}
+       // An elaborate, custom popup
+       var myPopup = $ionicPopup.show({
+         template: ['<h5>Tipo '+tipo+'</h5><input type="text" ng-model="data.tipo" style="border:solid rgba(128, 123, 123, 0.21);">',
 
+          '<h5>Cantidad $'+cantidad+'</h5><input type="number" ng-model="data.cantidad" style="border:solid rgba(128, 123, 123, 0.21);">'],
+
+         title: 'Cambiar Gasto',
+         scope: $scope,
+         buttons: [
+           { text: 'Cancel' },
+           {
+             text: '<b>Modificar</b>',
+             type: 'button-positive',
+             onTap: function(e) {
+               if ($scope.data.tipo == null & $scope.data.cantidad == null) {
+                 e.preventDefault();
+               } else { 
+                           if($scope.data.tipo!=null & $scope.data.cantidad == null){
+                               $scope.data.cantidad = cantidad;
+                            }else  if($scope.data.cantidad!=null & $scope.data.tipo == null){
+                               $scope.data.tipo = tipo;
+                            }
+                          var settings ={ 
+                            "url": $Global.url+"/api/modificarGasto",
+                            "method": "POST",
+                            "data": {
+                            "gasto_id": id, 
+                            "user_id": $Global.id,
+                            "tipo": $scope.data.tipo,
+                            "cantidad": $scope.data.cantidad,
+                            "_token": $Global.token
+                          }
+
+                          }
+                             $.ajax(settings).done(function (response) {
+                                if(response == 'true'){
+                                  var alertPopup = $ionicPopup.alert({
+                                   title: 'Gastos',
+                                   template: 'Cambios Realizados',
+                                   buttons: [{ text: 'OK' ,type: 'button-positive'}]
+                                 });
+                                  $state.go('menu');
+                                }
+                             })
+
+                        
+                    
+               }
+             }
+           },
+         ]
+       })
+    };
 }])
+

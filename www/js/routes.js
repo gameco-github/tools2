@@ -10,7 +10,7 @@ angular.module('app.routes', [])
     
   
 
-      .state('fondo', {
+  .state('fondo', {
     url: '/page1',
     templateUrl: 'templates/fondo.html',
     controller: 'fondoCtrl'
@@ -34,6 +34,23 @@ angular.module('app.routes', [])
     controller: 'misGastosCtrl'
   })
 
+ .state('menu', {
+    url: '/page5',
+    templateUrl: 'templates/menu.html',
+    controller: 'menuCtrl'
+  })
+
+  .state('prestamo', {
+    url: '/page6',
+    templateUrl: 'templates/prestamo.html',
+    controller: 'prestamoCtrl'
+  })
+
+  .state('abono', {
+    url: '/page7',
+    templateUrl: 'templates/abono.html',
+    controller: 'abonoCtrl'
+  })
 $urlRouterProvider.otherwise('/page2')
 
   

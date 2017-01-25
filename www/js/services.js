@@ -24,9 +24,17 @@ angular.module('app.services', [])
 	}
 }])
 
+.factory('Deudores', ['$http','$Global', function($http, $Global){
+	return {
+		mostrar : function(){
+		return $http.post($Global.url+'/api/verDeudores');
+		}
+	}
+}])
+
 .factory('$Global', function() {
   return {
-  	  url : 'http://gamecotools.com.mx',
+  	  url : 'http://gameco.dev',
       token : '',
       id : '',
       mis_gastos : ''
@@ -35,6 +43,7 @@ angular.module('app.services', [])
 
 .factory('$Variables', function() {
   return {
-  	  fondo : ''
+  	  fondo : '',
+  	  deuda : ''
   }
 })
